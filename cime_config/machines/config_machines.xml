@@ -3260,11 +3260,14 @@
     </module_system>
     <RUNDIR>$CIME_OUTPUT_ROOT/$CASE/run</RUNDIR>
     <EXEROOT>$CIME_OUTPUT_ROOT/$CASE/bld</EXEROOT>
-    <environment_variables>
+    <environment_variables mpilib="mpi-serial">
       <env name="NETCDF_PATH">$ENV{NETCDF_PATH}</env>
       <env name="MKLROOT">$ENV{MKLROOT}</env>
+      <env name="SZIP_PATH">/usr/projects/climate/SHARED_CLIMATE/software/badger/hdf5/1.10.2/intel-18.0.2/lib</env>
     </environment_variables>
     <environment_variables mpilib="!mpi-serial">
+      <env name="NETCDF_PATH">$ENV{NETCDF_PATH}</env>
+      <env name="MKLROOT">$ENV{MKLROOT}</env>
       <env name="PNETCDF_PATH">$ENV{PNETCDF_PATH}</env>
       <env name="PNETCDF_HINTS">romio_ds_write=disable;romio_ds_read=disable;romio_cb_write=enable;romio_cb_read=enable</env>
     </environment_variables>
