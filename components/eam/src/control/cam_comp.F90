@@ -220,7 +220,7 @@ subroutine cam_run1(cam_in, cam_out, yr, mn, dy, sec )
    use time_manager,     only: get_nstep
    use scamMod,          only: single_column
 #ifdef MMF_ML_TRAINING
-   use ml_training,      only: write_ml_training_input, write_ml_training_output
+   use ml_training,      only: write_ml_training
 #endif /* MMF_ML_TRAINING */
 
    type(cam_in_t)  :: cam_in(begchunk:endchunk)
@@ -256,12 +256,12 @@ subroutine cam_run1(cam_in, cam_out, yr, mn, dy, sec )
      call scam_use_iop_srf( cam_in)
    endif
 
-   !-----------------------------------------------------------------------------
+   !----------------------------------------------------------------------------
    ! write data for ML training
-   !-----------------------------------------------------------------------------
+   !----------------------------------------------------------------------------
 #ifdef MMF_ML_TRAINING
    if (present(yr).and.present(mn).and.present(dy).and.present(sec)) then
-      call write_ml_training_input(pbuf2d, cam_in, yr, mn, dy, sec)
+      call write_ml_training(pbuf2d, phys_state, phys_tend, cam_in, cam_out, yr, mn, dy, sec, 1)
    end if
 #endif /* MMF_ML_TRAINING */
 
@@ -275,12 +275,12 @@ subroutine cam_run1(cam_in, cam_out, yr, mn, dy, sec )
    call phys_run1(phys_state, dtime, phys_tend, pbuf2d,  cam_in, cam_out)
    call t_stopf  ('phys_run1')
 
-   !-----------------------------------------------------------------------------
+   !----------------------------------------------------------------------------
    ! write data for ML training
-   !-----------------------------------------------------------------------------
+   !----------------------------------------------------------------------------
 #ifdef MMF_ML_TRAINING
    if (present(yr).and.present(mn).and.present(dy).and.present(sec)) then
-      call write_ml_training_output(pbuf2d, cam_out, yr, mn, dy, sec)
+      call write_ml_training(pbuf2d, phys_state, phys_tend, cam_in, cam_out, yr, mn, dy, sec, 2)
    end if
 #endif /* MMF_ML_TRAINING */
 
