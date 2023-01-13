@@ -475,6 +475,11 @@ contains
 
       character(len=10), dimension(3) :: dims_crm_rad = (/'crm_nx_rad','crm_ny_rad','crm_nz    '/)
 
+#ifdef MMF_ML_TRAINING
+      integer :: ml_solin_idx  = -1
+      integer :: ml_coszrs_idx = -1
+#endif
+
       !-----------------------------------------------------------------------
 
       ! Initialize cloud optics
@@ -910,6 +915,11 @@ contains
                      sampling_seq='rad_lwsw', flag_xyfill=.true.)
       endif
 
+#ifdef MMF_ML_TRAINING
+      ml_solin_idx  = pbuf_get_index('SOLIN', errcode=err)
+      ml_coszrs_idx = pbuf_get_index('COSZRS',errcode=err)
+#endif
+
    end subroutine radiation_init
 
    subroutine radiation_final()
@@ -1296,6 +1306,9 @@ contains
       ! Loop variables
       integer :: icol, ilay
 
+#ifdef MMF_ML_TRAINING
+      real(r8), pointer, dimension(:) :: ml_solin, ml_coszrs
+#endif
       !----------------------------------------------------------------------
 
       ! Copy state so we can use CAM routines with arrays replaced with data
@@ -1431,6 +1444,10 @@ contains
                ! history buffer
                call set_cosine_solar_zenith_angle(state, dt_avg, coszrs(1:ncol))
                call outfld('COSZRS', coszrs(1:ncol), ncol, state%lchnk)
+#ifdef MMF_ML_TRAINING
+               call pbuf_get_field(pbuf, pbuf_get_index('COSZRS'), ml_coszrs)
+               ml_coszrs(1:ncol) = coszrs(1:ncol)
+#endif 
 
                ! Gather night/day column indices for subsetting SW inputs; we only want to
                ! do the shortwave radiative transfer during the daytime to save
@@ -1745,6 +1762,10 @@ contains
 
                ! Send fluxes to history buffer
                call output_fluxes_sw(icall, state, fluxes_allsky, fluxes_clrsky, qrs,  qrsc)
+#ifdef MMF_ML_TRAINING
+               call pbuf_get_field(pbuf, pbuf_get_index('SOLIN'), ml_solin)
+               ml_solin(1:ncol) = fluxes_clrsky%flux_dn(1:ncol,1)
+#endif
 
                ! Map to CRM columns
                if (use_MMF) then
