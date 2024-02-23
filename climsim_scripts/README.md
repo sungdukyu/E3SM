@@ -8,9 +8,9 @@ For general E3SM uses, refer to the following resources
 - [CESM tutorials](https://www2.cesm.ucar.edu/events/tutorials/2021/coursework.html) * While CESM is a different model, CESM and E3SM have shared history and use [CIME](https://esmci.github.io/cime/versions/master/html/index.html#). So, their workflow (create -> setup -> build -> submit) are very similar. 
 
 ## Step-by-step insturction
-#### [0] Download E3SM
+### [0] Download E3SM
 ```
-> git clone https://github.com/sungdukyu/E3SM/tree/climsim/fkb
+> git clone https://github.com/sungdukyu/E3SM/
 > cd E3SM
 > git checkout climsim/fkb
 > git submodule update --init --recursive
@@ -30,19 +30,19 @@ For general E3SM uses, refer to the following resources
 > atm_nthrds=8                       #  8 for pm-gpu;  1 for pm-cpu
 > max_task_per_node=32               # 32 for pm-gpu; 64 for pm-cpu
 > PECOUNT=$((max_mpi_per_node*atm_nthrds*num_nodes))
-> ./cime/scrips/create_case --case ${CASEPATH} --compset ${COMPSET} --res ${RESOLUTION} --mach ${MACHINE} --compiler ${COMPILER} --pecount ${PECOUNT}
+> ./cime/scripts/create_newcase --case ${CASEPATH} --compset ${COMPSET} --res ${RESOLUTION} --mach ${MACHINE} --compiler ${COMPILER} --pecount ${PECOUNT}
 ```
 
 ### [2] update xml files
 ```
 > cd $CASEPATH
 # update directories for build and run
-> ./xml_change EXEROOT=${CASEPATH}/build
-> ./xml_change RUNDIR=${CASEPATH}/run
-> ./xml_change DOUT_S_ROOT=${CASEPATH}/archive
+> ./xmlchange EXEROOT=${CASEPATH}/build
+> ./xmlchange RUNDIR=${CASEPATH}/run
+> ./xmlchange DOUT_S_ROOT=${CASEPATH}/archive
 
 # set the simulation type (initial run or continued run)
-> ./xml_change RUN_TYPE=startup # if it's restart (e.g., branch or hybrid), need to update RUN_REFDIR, GET_REFCASE, RUN_REFCASE, RUN_REFDATE, RUN_REFTOD, RUN_STARTDATE, etc.
+> ./xmlchange RUN_TYPE=startup # if it's restart (e.g., branch or hybrid), need to update RUN_REFDIR, GET_REFCASE, RUN_REFCASE, RUN_REFDATE, RUN_REFTOD, RUN_STARTDATE, etc.
 
 # machine specific setting
 > ./xmlchange MAX_MPITASKS_PER_NODE=4 # 64 for pm-cpu and 4 for pm-gpu
@@ -56,15 +56,16 @@ For general E3SM uses, refer to the following resources
 > ./xmlchange STOP_OPTION=ndays,STOP_N=8,RESUBMIT=0
 
 # slurm options
-> ./xmlchange JOB_QUEUE=debug # debug or regular
-> ./xmlchange JOB_WALLCLOCK_TIME=00:20:00
-> ./xmlchange CHARGE_ACCOUNT=m4331,PROJECT=m4331
+> ./xmlchange JOB_QUEUE=debug              # (machine dependant) quename (e.g., for Perlmutter, debug or regular)
+> ./xmlchange JOB_WALLCLOCK_TIME=00:20:00  # Requested wall clock time
+> ./xmlchange CHARGE_ACCOUNT=...           # Account number for allocation
+> ./xmlchange PROJECT=...                  # Account number for allocation
 ```
 
 ### [3] update user_nl_eam
     (See Appendix A to learn different ClimSim FKB configurations)
 ```
-> cd $E3SMROOT
+> cd $CASEPATH
 > cat << EOF >> user_nl_eam
 
 # Mandatory: turn off aerosol optical calculations
@@ -83,10 +84,10 @@ inputlength     = 425              # length of input vector
 outputlength    = 368              # length of output vector
 cb_nn_var_combo = 'v2'             # input/output variable combo
 input_rh        = .false.          # .true. if input 'state_q0001' is relative humidity; .false. if specific humidity
-cb_fkb_model    = '{f_fkb_model}'  # pathname for fkb model weights
-cb_inp_sub      = '{f_inp_sub}'    # pathname for input vector subtraction constants
-cb_inp_div      = '{f_inp_div}'    # pathname for input vector division constants
-cb_out_scale    = '{f_out_scale}'  # pathname for output vector scaling constants
+cb_fkb_model    = '{E3SMROOT}/climsim_script/mlp-001.linear-out.h5.txt'  # full pathname for fkb model weights
+cb_inp_sub      = '{E3SMROOT}/climsim_script/inp_sub.v2.txt'    # full pathname for input vector subtraction constants
+cb_inp_div      = '{E3SMROOT}/climsim_script/inp_div.v2.txt'    # full pathname for input vector division constants
+cb_out_scale    = '{E3SMROOT}/climsim_script/out_scale.v2.txt'  # full pathname for output vector scaling constants
 
 # partial coupling setup
 cb_partial_coupling = .true.
@@ -111,7 +112,7 @@ EOF
 
 ### [4] setup/build/submit
 ```
-> cd $E3SMROOT
+> cd $CASEPATH
 ./case.setup
 ./case.build
 ./case.submit
@@ -215,5 +216,3 @@ EOF
 # To-be-added
 - how to define cb_nn_var_combo
 - fincl. partially coupled variable workflow.
-
-
