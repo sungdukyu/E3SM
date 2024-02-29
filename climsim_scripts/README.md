@@ -69,33 +69,33 @@ For general E3SM uses, refer to the following resources
 > ./case.setup # to populate user_ml_XXX 
 > cat << EOF >> user_nl_eam
 
-# Mandatory: turn off aerosol optical calculations
+! Mandatory: turn off aerosol optical calculations
 &radiation
 do_aerosol_rad = .false.
 /
 
-# Optional: turns on extra validation of physics_state objects in physics_update. Used mainly to track down which package is the source of invalid data in state.
+! Optional: turns on extra validation of physics_state objects in physics_update. Used mainly to track down which package is the source of invalid data in state.
 &phys_ctl_nl
 state_debug_checks = .true.
 /
 
-# ClimSim FKB configuration
+! ClimSim FKB configuration
 &climsim_nl
-inputlength     = 425              # length of input vector
-outputlength    = 368              # length of output vector
-cb_nn_var_combo = 'v2'             # input/output variable combo
-input_rh        = .false.          # .true. if input 'state_q0001' is relative humidity; .false. if specific humidity
-cb_fkb_model    = '{E3SMROOT}/climsim_script/mlp-001.linear-out.h5.txt'  # full pathname for fkb model weights
-cb_inp_sub      = '{E3SMROOT}/climsim_script/inp_sub.v2.txt'    # full pathname for input vector subtraction constants
-cb_inp_div      = '{E3SMROOT}/climsim_script/inp_div.v2.txt'    # full pathname for input vector division constants
-cb_out_scale    = '{E3SMROOT}/climsim_script/out_scale.v2.txt'  # full pathname for output vector scaling constants
+inputlength     = 425              ! length of input vector
+outputlength    = 368              ! length of output vector
+cb_nn_var_combo = 'v2'             ! input/output variable combo
+input_rh        = .false.          ! .true. if input 'state_q0001' is relative humidity; .false. if specific humidity
+cb_fkb_model    = '{E3SMROOT}/climsim_script/mlp-001.linear-out.h5.txt'  ! full pathname for fkb model weights
+cb_inp_sub      = '{E3SMROOT}/climsim_script/inp_sub.v2.txt'             ! full pathname for input vector subtraction constants
+cb_inp_div      = '{E3SMROOT}/climsim_script/inp_div.v2.txt'             ! full pathname for input vector division constants
+cb_out_scale    = '{E3SMROOT}/climsim_script/out_scale.v2.txt'           ! full pathname for output vector scaling constants
 
-# partial coupling setup
+! partial coupling setup
 cb_partial_coupling = .true.
 cb_partial_coupling_vars = 'ptend_t', 'ptend_q0001','ptend_q0002','ptend_q0003', 'ptend_u', 'ptend_v', 'cam_out_PRECC', 'cam_out_PRECSC', 'cam_out_NETSW', 'cam_out_FLWDS', 'cam_out_SOLS', 'cam_out_SOLL', 'cam_out_SOLSD', 'cam_out_SOLLD'
 /
 
-# history tape setup
+! history tape setup
 &cam_history_nl
 fincl2 = 'state_t_0:I:I', 'state_q0001_0:I', 'state_q0002_0:I', 'state_q0003_0:I', 'state_u_0:I', 'state_v_0:I', 'cam_out_NETSW_0:I', 'cam_out_FLWDS_0:I', 'cam_out_PRECSC_0:I', 'cam_out_PRECC_0:I', 'cam_out_SOLS_0:I', 'cam_out_SOLL_0:I', 'cam_out_SOLSD_0:I', 'cam_out_SOLLD_0:I'
 fincl3 = 'state_t_1:I', 'state_q0001_1:I', 'state_q0002_1:I', 'state_q0003_1:I', 'state_u_1:I', 'state_v_1:I', 'cam_out_NETSW_1:I', 'cam_out_FLWDS_1:I', 'cam_out_PRECSC_1:I', 'cam_out_PRECC_1:I', 'cam_out_SOLS_1:I', 'cam_out_SOLL_1:I', 'cam_out_SOLSD_1:I', 'cam_out_SOLLD_1:I'
