@@ -57,7 +57,7 @@ For general E3SM uses, refer to the following resources
 
 # slurm options
 > ./xmlchange JOB_QUEUE=debug              # (machine dependant) quename (e.g., for Perlmutter, debug or regular)
-> ./xmlchange JOB_WALLCLOCK_TIME=00:15:00  # Requested wall clock time
+> ./xmlchange JOB_WALLCLOCK_TIME=00:10:00  # Requested wall clock time
 > ./xmlchange CHARGE_ACCOUNT=...           # Account number for allocation
 > ./xmlchange PROJECT=...                  # Account number for allocation
 ```
