@@ -57,7 +57,7 @@ For general E3SM uses, refer to the following resources
 
 # slurm options
 > ./xmlchange JOB_QUEUE=debug              # (machine dependant) quename (e.g., for Perlmutter, debug or regular)
-> ./xmlchange JOB_WALLCLOCK_TIME=00:20:00  # Requested wall clock time
+> ./xmlchange JOB_WALLCLOCK_TIME=00:15:00  # Requested wall clock time
 > ./xmlchange CHARGE_ACCOUNT=...           # Account number for allocation
 > ./xmlchange PROJECT=...                  # Account number for allocation
 ```
@@ -66,6 +66,7 @@ For general E3SM uses, refer to the following resources
     (See Appendix A to learn different ClimSim FKB configurations)
 ```
 > cd $CASEPATH
+> ./case.setup # to populate user_ml_XXX 
 > cat << EOF >> user_nl_eam
 
 # Mandatory: turn off aerosol optical calculations
@@ -113,9 +114,8 @@ EOF
 ### [4] setup/build/submit
 ```
 > cd $CASEPATH
-./case.setup
-./case.build
-./case.submit
+> ./case.build
+> ./case.submit
 ```
 
 ## Appendix A: How to configure ClimSim using `user_nl_eam`
