@@ -5,7 +5,8 @@ This version of ClimSim-E3SM relies on [FKB](https://www.hindawi.com/journals/sp
 
 For general E3SM uses, refer to the following resources
 - [E3SM tutorials](https://e3sm.org/about/events/e3sm-tutorials/)
-- [CESM tutorials](https://www2.cesm.ucar.edu/events/tutorials/2021/coursework.html) * While CESM is a different model, CESM and E3SM have shared history and use [CIME](https://esmci.github.io/cime/versions/master/html/index.html#). So, their workflow (create -> setup -> build -> submit) are very similar. 
+- [CESM tutorials](https://www2.cesm.ucar.edu/events/tutorials/2021/coursework.html) * While CESM is a different model, CESM and E3SM have shared history and use [CIME](https://esmci.github.io/cime/versions/master/html/index.html#). So, their workflow (create -> setup -> build -> submit) are very similar.
+- [CIME manual](https://esmci.github.io/cime/versions/master/html/users_guide/index.html)
 
 ## Step-by-step insturction
 ### [0] Download E3SM
