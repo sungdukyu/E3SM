@@ -212,9 +212,13 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS " -L$DIR/FKB64/build/lib -lneural ")
 EOF
 ```
 
-## Appendix C: cb_nn_var_combo
+## Appendix C: EAM output fields for the partial coupling
+To maximize the diagnostic capability, the partial coupling can save ClimSim output variables (state_t, state_q0001, state_q0002, state_q0003, state_u, state_v, cam_out_NETSW, cam_out_FLWDS, cam_out_SOLL, cam_out_SOLS, cam_out_SOLLD, cam_out_SOLSD, cam_out_PRECC, cam_out_PRECSC) at each time step of the partial coupling. The suffix of a variable name is indicative of the time point when the variable is saved.
+- "_0" (e.g., state_t_0): Input stave
+- "_1" (e.g., state_t_1): Output of SP (CRM) calculation
+- "_2" (e.g., state_t_1): Output of NN calculation
+- "_3" (e.g., state_t_1): Partial coupled output, i.e., the combination of the above two based on the namelist variable cb_partial_coupling_vars
 
-## Appendix D: fincl stuffs
 
 # To-be-added
 - how to define cb_nn_var_combo
