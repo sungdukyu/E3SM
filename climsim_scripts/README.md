@@ -66,7 +66,6 @@ For general E3SM uses, refer to the following resources
     (See Appendix A to learn different ClimSim FKB configurations)
 ```
 > cd $CASEPATH
-> ./case.setup # to populate user_ml_XXX 
 > cat << EOF >> user_nl_eam
 
 ! Mandatory: turn off aerosol optical calculations
@@ -114,6 +113,7 @@ EOF
 ### [4] setup/build/submit
 ```
 > cd $CASEPATH
+> ./case.setup
 > ./case.build
 > ./case.submit
 ```
