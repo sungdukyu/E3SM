@@ -36,6 +36,7 @@ For general E3SM uses, refer to the following resources
 ### [2] update xml files
 ```
 > cd $CASEPATH
+
 # update directories for build and run
 > ./xmlchange EXEROOT=${CASEPATH}/build
 > ./xmlchange RUNDIR=${CASEPATH}/run
@@ -85,10 +86,10 @@ inputlength     = 425              ! length of input vector
 outputlength    = 368              ! length of output vector
 cb_nn_var_combo = 'v2'             ! input/output variable combo
 input_rh        = .false.          ! .true. if input 'state_q0001' is relative humidity; .false. if specific humidity
-cb_fkb_model    = '{E3SMROOT}/climsim_script/mlp-001.linear-out.h5.txt'  ! full pathname for fkb model weights
-cb_inp_sub      = '{E3SMROOT}/climsim_script/inp_sub.v2.txt'             ! full pathname for input vector subtraction constants
-cb_inp_div      = '{E3SMROOT}/climsim_script/inp_div.v2.txt'             ! full pathname for input vector division constants
-cb_out_scale    = '{E3SMROOT}/climsim_script/out_scale.v2.txt'           ! full pathname for output vector scaling constants
+cb_fkb_model    = '${E3SMROOT}/climsim_script/mlp-001.linear-out.h5.txt'  ! full pathname for fkb model weights
+cb_inp_sub      = '${E3SMROOT}/climsim_script/inp_sub.v2.txt'             ! full pathname for input vector subtraction constants
+cb_inp_div      = '${E3SMROOT}/climsim_script/inp_div.v2.txt'             ! full pathname for input vector division constants
+cb_out_scale    = '${E3SMROOT}/climsim_script/out_scale.v2.txt'           ! full pathname for output vector scaling constants
 
 ! partial coupling setup
 cb_partial_coupling = .true.
