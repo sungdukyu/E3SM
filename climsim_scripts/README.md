@@ -49,8 +49,9 @@ For general E3SM uses, refer to the following resources
 > ./xmlchange MAX_TASKS_PER_NODE=32 # 64 for pm-cpu; 32 for pm-gpu
 
 # build options
-> ./xmlchange PIO_NETCDF_FORMAT=64bit_data
-> ./xmlchange --append CAM_CONFIG_OPTS=" -cppdefs ' {CLIMSIM_CPP} '  " # CLIMSIM OPTION
+> CLIMSIM_CPP="-DCLIMSIM -DCLIMSIM_DIAG_PARTIAL -DCLIMSIMDEBUG"
+> ./xmlchange PIO_NETCDF_FORMAT="64bit_data"
+> ./xmlchange --append CAM_CONFIG_OPTS=" -cppdefs ' ${CLIMSIM_CPP} '  "
 
 # set simulation length
 > ./xmlchange STOP_OPTION=ndays,STOP_N=8,RESUBMIT=0
