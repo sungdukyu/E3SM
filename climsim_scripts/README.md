@@ -29,8 +29,8 @@ For general E3SM uses, refer to the following resources
 > max_mpi_per_node=4                 #  4 for pm-gpu; 64 for pm-cpu
 > atm_nthrds=8                       #  8 for pm-gpu;  1 for pm-cpu
 > max_task_per_node=32               # 32 for pm-gpu; 64 for pm-cpu
-> PECOUNT=$((max_mpi_per_node*atm_nthrds*num_nodes))
-> ./cime/scripts/create_newcase --case ${CASEPATH} --compset ${COMPSET} --res ${RESOLUTION} --mach ${MACHINE} --compiler ${COMPILER} --pecount ${PECOUNT}
+> atm_ntasks=$((max_mpi_per_node*num_nodes))
+> ./cime/scripts/create_newcase --case ${CASEPATH} --compset ${COMPSET} --res ${RESOLUTION} --mach ${MACHINE} --compiler ${COMPILER} --pecount ${atm_ntasks}x${atm_nthrds}
 ```
 
 ### [2] update xml files
