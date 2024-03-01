@@ -1,14 +1,14 @@
 # ClimSim-enabled E3SM
 This document provides how to run E3SM with a ClimSim emulator. While the configurations in this example are based on NERSC Perlmutter, other machines can be used. If porting is necessary, please refer to [the CIME document](https://e3sm.org/model/running-e3sm/supported-machines/)
 
-This version of ClimSim-E3SM relies on [FKB](https://www.hindawi.com/journals/sp/2020/8888811/) to link a ML emulator inside E3SM's Fortran codebase. If FKB is not installed previously on a machine to be used, see Appendix B for installing FKB.
+This version of ClimSim-E3SM relies on [FKB](https://www.hindawi.com/journals/sp/2020/8888811/) to link an ML emulator inside E3SM's Fortran codebase. If FKB is not installed previously on a machine, see Appendix B for installing FKB.
 
 For general E3SM uses, refer to the following resources
 - [E3SM tutorials](https://e3sm.org/about/events/e3sm-tutorials/)
-- [CESM tutorials](https://www2.cesm.ucar.edu/events/tutorials/2021/coursework.html) * While CESM is a different model, CESM and E3SM have shared history and use [CIME](https://esmci.github.io/cime/versions/master/html/index.html#). So, their workflow (create -> setup -> build -> submit) are very similar.
-- [CIME manual](https://esmci.github.io/cime/versions/master/html/users_guide/index.html) (This document containts the information about many commands in the step-by-step instruction, e.g., case.setup, case.build, case.submit, xmlchange, ...)
+- [CESM tutorials](https://www2.cesm.ucar.edu/events/tutorials/2021/coursework.html) * While CESM is a different model, CESM and E3SM have shared history and use [CIME](https://esmci.github.io/cime/versions/master/html/index.html#). So, their workflow (create -> setup -> build -> submit) is very similar.
+- [CIME manual](https://esmci.github.io/cime/versions/master/html/users_guide/index.html) (This document contains the information about many commands in the step-by-step instruction, e.g., case.setup, case.build, case.submit, xmlchange, ...)
 
-## Step-by-step insturction
+## Step-by-step instructions
 ### [0] Download E3SM
 ```
 > git clone https://github.com/sungdukyu/E3SM/
@@ -26,7 +26,7 @@ For general E3SM uses, refer to the following resources
 > COMPSET=F2010-MMF1                 # F2010-MMF1 for real-geography; FAQP-MMF1 for aquaplanet
 > RESOLUTION=ne4pg2_ne4pg2           # ne4pg2_ne4pg2 for 'low-res'; ne30pg2_oECv3 for 'high-res'
 > MACHINE=pm-gpu                     # pm-gpu for NERSC Perlmutter GPU nodes; pm-cpu for CPU nodes
-> COMPILER=gnugpu                    # gnugpu for pm-gpu; gny for pm-cpu
+> COMPILER=gnugpu                    # gnugpu for pm-gpu; gnu for pm-cpu
 > num_nodes=2                        # number of requested compute nodes, e.g., 2 for 'low-res'; 32 for 'high-res'
 > max_mpi_per_node=4                 #  4 for pm-gpu; 64 for pm-cpu
 > atm_nthrds=8                       #  8 for pm-gpu;  1 for pm-cpu
@@ -35,7 +35,7 @@ For general E3SM uses, refer to the following resources
 > ./cime/scripts/create_newcase --case ${CASEPATH} --compset ${COMPSET} --res ${RESOLUTION} --mach ${MACHINE} --compiler ${COMPILER} --pecount ${atm_ntasks}x${atm_nthrds}
 ```
 
-### [2] update xml files
+### [2] update XML files
 ```
 > cd $CASEPATH
 
@@ -60,11 +60,12 @@ For general E3SM uses, refer to the following resources
 > ./xmlchange STOP_OPTION=ndays,STOP_N=8,RESUBMIT=0
 
 # slurm options
-> ./xmlchange JOB_QUEUE=debug              # (machine dependant) quename (e.g., for Perlmutter, debug or regular)
+> ./xmlchange JOB_QUEUE=debug              # (machine dependant) queue name (e.g., for Perlmutter, debug or regular)
 > ./xmlchange JOB_WALLCLOCK_TIME=00:10:00  # Requested wall clock time
 > ./xmlchange CHARGE_ACCOUNT=...           # Account number for allocation
 > ./xmlchange PROJECT=...                  # Account number for allocation
 ```
+`-DCLIMSIM` should always be included in `CLIMSIM_CPP` to enable neural network inference. `-DCLIMSIM_DIAG_PARTIAL` is optional for diagnostic partial-coupling output (see Appendix C). `-DCLIMSIMDEBUG` is also optional for extra debugging logs.
 
 ### [3] update user_nl_eam
 (See Appendix A to learn different ClimSim FKB configurations)
@@ -85,11 +86,11 @@ state_debug_checks = .true.
 
 ! ClimSim FKB configuration
 &climsim_nl
-inputlength     = 425              ! length of input vector
-outputlength    = 368              ! length of output vector
+inputlength     = 425              ! length of the input vector
+outputlength    = 368              ! length of the output vector
 cb_nn_var_combo = 'v2'             ! input/output variable combo
 input_rh        = .false.          ! .true. if input 'state_q0001' is relative humidity; .false. if specific humidity
-cb_fkb_model    = '${E3SMROOT}/climsim_scripts/mlp-001.linear-out.h5.txt'  ! full pathname for fkb model weights
+cb_fkb_model    = '${E3SMROOT}/climsim_scripts/mlp-001.linear-out.h5.txt'  ! full pathname for FKB model weights
 cb_inp_sub      = '${E3SMROOT}/climsim_scripts/inp_sub.v2.txt'             ! full pathname for input vector subtraction constants
 cb_inp_div      = '${E3SMROOT}/climsim_scripts/inp_div.v2.txt'             ! full pathname for input vector division constants
 cb_out_scale    = '${E3SMROOT}/climsim_scripts/out_scale.v2.txt'           ! full pathname for output vector scaling constants
@@ -124,7 +125,6 @@ EOF
 ```
 
 ## Appendix A: How to configure ClimSim using `user_nl_eam`
-How to set up different case
 - Shared options
 ```
 &radiation
@@ -132,31 +132,33 @@ do_rad_aer=.false.
 /
 
 &climsim_nl
-inputlength = ...      #(integer) the length of input vector
-outputlength = ...     #(integer) the length of output vector
-cb_nn_coupling_step = ... #(integer) the timestep where NN coupling starts. Default: 72.
-                          #           before this timestep, a regular MMF (CRM) is running.
-                          #           note that the default timestep for E3SM-MMF is 20 minutes.
-cb_nn_var_combo = ...  #(string) a preset name for a specific input/output variable combination
-cb_inp_sub = ...       #(string) pathname of input vector subtraction constant text file
-cb_inp_div = ...       #(string) pathname of input vector division constant text file
-cb_out_scale = ...     #(string) pathname of output vector scaling constant text file
+inputlength = ...      !(integer) the length of input vector
+outputlength = ...     !(integer) the length of output vector
+
+cb_nn_coupling_step = ... !(integer) the timestep where NN coupling starts. Default: 72.
+                          !           before this timestep, a regular MMF (CRM) is running.
+                          !           note that the default timestep for E3SM-MMF is 20 minutes.
+
+cb_nn_var_combo = ...  !(string) a preset name for a specific input/output variable combination
+cb_inp_sub = ...       !(string) pathname of input vector subtraction constant text file
+cb_inp_div = ...       !(string) pathname of input vector division constant text file
+cb_out_scale = ...     !(string) pathname of output vector scaling constant text file
 /
 ```
 - Single model inference
 ```
 (add shared option)
 &climsim_nl
-cb_fkb_model = ...  #(string) pathname of FKB model weight text file
+cb_fkb_model = ...  !(string) pathname of FKB model weight text file
 /
 ```
 - Ensemble model inference
 ```
 (add shared option)
 &climsim_nl
-cb_do_ensemble = ...         #(logical) .true. for ensemble inference; .false. for single-model inference
-cb_ens_size = ...            #(integer) number of ensemble models
-cb_ens_fkb_model_list = ...  #(strings) pathnames for FKB model weight text files, e.g., 'mlp-1.txt','mlp-2.txt','mlp-3.txt','mlp-4.txt','mlp-5.txt'
+cb_do_ensemble = ...         !(logical) .true. for ensemble inference; .false. for single-model inference
+cb_ens_size = ...            !(integer) number of ensemble models
+cb_ens_fkb_model_list = ...  !(strings) pathnames for FKB model weight text files, e.g., 'mlp-1.txt','mlp-2.txt','mlp-3.txt','mlp-4.txt','mlp-5.txt'
 /
 ```
 
@@ -167,7 +169,9 @@ cb_ens_fkb_model_list = ...  #(strings) pathnames for FKB model weight text file
 cb_do_ensemble = ...
 cb_ens_size = ...
 cb_ens_fkb_model_list = ...
-cb_random_ens_size = ...     #(integer) number of ensemble members to make a mean inference. E.g., if cb_ens_size=10 and cb_random_ens_size=5, 5 randomly chosen emulator models out of 10 are used to make a mean inference
+cb_random_ens_size = ...     !(integer) number of ensemble members to make a mean inference.
+                             !          e.g., if cb_ens_size=10 and cb_random_ens_size=5,
+                             !                5 randomly chosen emulator models out of 10 are used to make a mean inference
 /
 ```
 
@@ -176,8 +180,8 @@ cb_random_ens_size = ...     #(integer) number of ensemble members to make a mea
 (add shared option)
 (add single-model or ensemble model option)
 &climsim_nl
-cb_partial_coupling = ...  #(logical) .true. if input state_q0001 is relative humidity; .false. if specific humidity
-cb_partial_coupling_vars = #(strings) a list of NN variables to be prognostically coupled
+cb_partial_coupling = ...  !(logical) .true. if input state_q0001 is relative humidity; .false. if specific humidity
+cb_partial_coupling_vars = !(strings) a list of NN variables to be prognostically coupled
 /
 ```
 
@@ -186,7 +190,7 @@ cb_partial_coupling_vars = #(strings) a list of NN variables to be prognosticall
 (add shared option)
 (add single-model or ensemble model option)
 &climsim_nl
-input_rh = ...  #(logical) .true. if input state_q0001 is relative humidity; .false. if specific humidity
+input_rh = ...  !(logical) .true. if input state_q0001 is relative humidity; .false. if specific humidity
 /
 ```
 
@@ -204,8 +208,8 @@ Unfortunately, [the official FKB repository](https://github.com/scientific-compu
 > sh build_steps.sh  # compile FKB
 ```
 
-- Modify machine specific CMAKE macro in E3SM
-CMAKE macro files for supported machines are in `$E3SMROOT/cime_config/machines/cmake_macros`. Add the following two lines to a right CMAKE macro file depending on machines and compilers. In this example, we are adding to cmake macro file for Perlmutter / GPU. 
+- Modify machine-specific CMAKE macro in E3SM
+CMAKE macro files for supported machines are in `$E3SMROOT/cime_config/machines/cmake_macros`. Add the following two lines to the right CMAKE macro file depending on machines and compilers. In this example, we are adding to cmake macro file for Perlmutter / GPU. 
 
 
 ```
