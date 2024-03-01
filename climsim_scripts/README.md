@@ -220,6 +220,8 @@ string(APPEND CMAKE_EXE_LINKER_FLAGS " -L$DIR/FKB64/build/lib -lneural ")
 EOF
 ```
 
+For perlmutter use with GPU nodes and GNU compiler, [`gnugpu_pm-gpu.cmake`](https://github.com/sungdukyu/E3SM/blob/climsim/tmp_doc/cime_config/machines/cmake_macros/gnugpu_pm-gpu.cmake#L20-L22) already includes a pre-compiled FKB. If you have an access to this directory, you can skip installing FKB. Otherwise, you will need to install your own FKB and replace [these lines](https://github.com/sungdukyu/E3SM/blob/climsim/tmp_doc/cime_config/machines/cmake_macros/gnugpu_pm-gpu.cmake#L20-L22).
+
 ## Appendix C: EAM output fields for the partial coupling
 To maximize the diagnostic capability, the partial coupling can save ClimSim output variables (state_t, state_q0001, state_q0002, state_q0003, state_u, state_v, cam_out_NETSW, cam_out_FLWDS, cam_out_SOLL, cam_out_SOLS, cam_out_SOLLD, cam_out_SOLSD, cam_out_PRECC, cam_out_PRECSC) at each time step of the partial coupling. The suffix of a variable name is indicative of the time point when the variable is saved.
 - "_0" (e.g., state_t_0): Input stave
