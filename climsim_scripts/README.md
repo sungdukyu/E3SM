@@ -204,7 +204,8 @@ Unfortunately, [the official FKB repository](https://github.com/scientific-compu
 > DIR=`pwd`
 > git clone https://github.com/sungdukyu/FKB64
 > cd FKB64 
-> # Set compiler options in build_steps.sh, by modifying FC (https://github.com/sungdukyu/FKB64/blob/master/build_steps.sh#L10)
+> # Make sure to compile with the same comiler you will use for E3SM
+> # Set compiler options by modifying FC in build_steps.sh (https://github.com/sungdukyu/FKB64/blob/master/build_steps.sh#L10).
 > sh build_steps.sh  # compile FKB
 ```
 
