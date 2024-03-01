@@ -66,7 +66,8 @@ For general E3SM uses, refer to the following resources
 ```
 
 ### [3] update user_nl_eam
-    (See Appendix A to learn different ClimSim FKB configurations)
+(See Appendix A to learn different ClimSim FKB configurations)
+
 ```
 > cd $CASEPATH
 > cat << EOF >> user_nl_eam
