@@ -19,6 +19,7 @@ For general E3SM uses, refer to the following resources
 ```
 
 ### [1] Create a case
+(Make sure `E3SMROOT` is set correctly!)
 ```
 > cd $E3SMROOT
 > CASEPATH=${SCRATCH}/FKB-E3SM-test1 # full pathname of your case (simulation)
