@@ -215,7 +215,7 @@ CMAKE macro files for supported machines are in `$E3SMROOT/cime_config/machines/
 
 ```
 > cmakefile=$E3SMROOT/cime_config/machines/cmake_macros/gnugpu_pm-gpu.cmake
-> cat << EOF > $cmakefile
+> cat << EOF >> $cmakefile
 string(APPEND CMAKE_Fortran_FLAGS " -I$DIR/FKB64/build/include ")
 string(APPEND CMAKE_EXE_LINKER_FLAGS " -L$DIR/FKB64/build/lib -lneural ")
 EOF
