@@ -133,6 +133,9 @@ do_rad_aer=.false.
 &climsim_nl
 inputlength = ...      #(integer) the length of input vector
 outputlength = ...     #(integer) the length of output vector
+cb_nn_coupling_step = ... # (integer) the timestep where NN coupling starts. Default: 72.
+                          #           before this timestep, a regular MMF (CRM) is running.
+                          #           note that the default timestep for E3SM-MMF is 20 minutes.
 cb_nn_var_combo = ...  #(string) a preset name for a specific input/output variable combination
 cb_inp_sub = ...       #(string) pathname of input vector subtraction constant text file
 cb_inp_div = ...       #(string) pathname of input vector division constant text file
