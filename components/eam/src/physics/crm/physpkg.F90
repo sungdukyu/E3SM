@@ -716,7 +716,8 @@ subroutine climsim_driver(phys_state, ztodt, phys_tend, pbuf2d,  cam_in, cam_out
   !-----------------------------------------------------------------------------
   ! Purpose: climsim driver
   !-----------------------------------------------------------------------------
-  use climsim,          only: cb_partial_coupling, cb_partial_coupling_vars
+  use climsim,          only: cb_partial_coupling, cb_partial_coupling_vars, &
+                              cb_nn_coupling_step
   use physics_buffer,   only: physics_buffer_desc, pbuf_get_chunk, &
                               pbuf_allocate, pbuf_get_index, pbuf_get_field
   use time_manager,     only: get_nstep, get_step_size, & 
@@ -832,7 +833,7 @@ subroutine climsim_driver(phys_state, ztodt, phys_tend, pbuf2d,  cam_in, cam_out
                        delta   ,eccf      )
      solin(:,lchnk) = sum(sfac(:)*solar_band_irrad(:)) * eccf * coszrs(:,lchnk)
   end do
-  ! [TO-DO] Check solin and coszrs from this calculation vs. pbuf_XXX
+  ! [SY TO-DO] Check solin and coszrs from this calculation vs. pbuf_XXX
 
   prec_dp_idx = pbuf_get_index('PREC_DP', errcode=i) ! Query physics buffer index
   snow_dp_idx = pbuf_get_index('SNOW_DP', errcode=i)
@@ -849,9 +850,7 @@ subroutine climsim_driver(phys_state, ztodt, phys_tend, pbuf2d,  cam_in, cam_out
   end if
 
   ! Determine if MMF spin-up perioid is over
-  ! (currently spin up time is set at 86400 sec ~ 1 day)
-  ! [TO-DO] create a namelist variable for mmf spin-up time
-  nstep_NN = 86400 / get_step_size()
+  nstep_NN = cb_nn_coupling_step  
   if (nstep-nstep0 .eq. nstep_NN) then
      do_climsim_inference = .true.
      if (masterproc) then

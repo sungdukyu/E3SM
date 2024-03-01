@@ -12,7 +12,7 @@ newcase,config,build,clean,submit,continue_run = False,False,False,False,False,F
 
 acct = 'm4331'
 
-case_prefix = 'FKB-rebased-test1'
+case_prefix = 'ClimSim-E3SM-test-run'
 # Added extra physics_state and cam_out variables.
 
 top_dir  = os.getenv('HOME')+'/repositories'
@@ -132,6 +132,8 @@ cb_fkb_model    = '{f_fkb_model}'
 cb_inp_sub      = '{f_inp_sub}'
 cb_inp_div      = '{f_inp_div}'
 cb_out_scale    = '{f_out_scale}'
+
+cb_nn_coupling_step = 72 ! Note that default timestep of E3SM MMF is 20 minutes.
 
 cb_partial_coupling = .true.
 cb_partial_coupling_vars = 'ptend_t', 'ptend_q0001','ptend_q0002','ptend_q0003', 'ptend_u', 'ptend_v', 'cam_out_PRECC', 'cam_out_PRECSC', 'cam_out_NETSW', 'cam_out_FLWDS', 'cam_out_SOLS', 'cam_out_SOLL', 'cam_out_SOLSD', 'cam_out_SOLLD' 

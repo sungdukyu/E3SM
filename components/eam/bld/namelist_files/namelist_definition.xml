@@ -7941,6 +7941,11 @@ Length of climsim input vector
 Length of climsim output vector
 </entry>
 
+<entry id="cb_nn_coupling_step" type="integer" category="climsim"
+       group="climsim_nl" valid_values="" >
+Timestep at which NN coupling begins
+</entry>
+
 <entry id="input_rh" type="logical" category="climsim"
        group="climsim_nl" valid_values="" >
 Toggle relative humidity

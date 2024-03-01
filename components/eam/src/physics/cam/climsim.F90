@@ -28,9 +28,10 @@ use mod_network, only: network_type
   ! Define variables for this entire module
   ! These are nameliest variables.
   ! If not specified in atm_in, the following defaults values are used.
-  integer :: inputlength  = 425     ! length of NN input vector
-  integer :: outputlength = 368     ! length of NN output vector
-  logical :: input_rh     = .false.  ! toggle to switch from q --> RH input
+  integer :: inputlength  = 425       ! length of NN input vector
+  integer :: outputlength = 368       ! length of NN output vector
+  logical :: input_rh     = .false.   ! toggle to switch from q --> RH input
+  integer :: cb_nn_coupling_step = 72 ! length of NN output vector
   logical :: cb_use_input_prectm1 = .false.  ! use previous timestep PRECT for input variable 
   character(len=256)    :: cb_fkb_model   ! absolute filepath for a fkb model txt file
   character(len=256)    :: cb_inp_sub     ! absolute filepath for a inp_sub.txt
@@ -60,7 +61,8 @@ use mod_network, only: network_type
   integer :: cb_n_levels_zero = 12 ! top n levels to zero out
 
   public neural_net, init_neural_net, climsim_readnl, &
-         cb_partial_coupling, cb_partial_coupling_vars
+         cb_partial_coupling, cb_partial_coupling_vars, &
+         cb_nn_coupling_step
   
 contains
 
@@ -269,7 +271,7 @@ end if
 #endif
 
    ! Manually applying ReLU activation for positive-definite variables
-   ! [TODO] for ensemble, ReLU should be moved before ens-averaging
+   ! [SY TO-DO] for ensemble, ReLU should be moved before ens-averaging
    do i=1,ncol
      ! ReLU for the last 8 variables (true for 'v1' and 'v2')
      do k=outputlength-7,outputlength
@@ -343,7 +345,7 @@ end if
        if (safter .lt. 0.) then ! can only happen when bctend < 0...
          s_bctend(i,k) = s_bctend(i,k) + abs(safter)/ztodt ! in which case reduce cooling rate
          write (iulog,*) 'HEY CLIMSIM made a negative absolute temperature, corrected but BEWARE!!!'
-         write (iulog,*) '' ! [TODO] printout lat/lon and error magnitude
+         write (iulog,*) '' ! [SY TO-DO] printout lat/lon and error magnitude
        endif
 
  ! vapor positivity:
@@ -602,7 +604,8 @@ end subroutine neural_net
                            cb_use_input_prectm1, &
                            cb_do_ensemble, cb_ens_size, cb_ens_fkb_model_list, &
                            cb_random_ens_size, &
-                           cb_nn_var_combo
+                           cb_nn_var_combo, &
+                           cb_nn_coupling_step
 
       ! Initialize 'cb_partial_coupling_vars'
       do f = 1, pflds
@@ -635,6 +638,7 @@ end subroutine neural_net
       call mpibcast(inputlength,  1,                 mpiint,  0, mpicom)
       call mpibcast(outputlength, 1,                 mpiint,  0, mpicom)
       call mpibcast(input_rh,     1,                 mpilog,  0, mpicom)
+      call mpibcast(cb_nn_coupling_step, 1,          mpiint,  0, mpicom)
       call mpibcast(cb_use_input_prectm1,1,          mpilog,  0, mpicom)
       call mpibcast(cb_fkb_model, len(cb_fkb_model), mpichar, 0, mpicom)
       call mpibcast(cb_inp_sub,   len(cb_inp_sub),   mpichar, 0, mpicom)
@@ -647,7 +651,7 @@ end subroutine neural_net
       call mpibcast(cb_ens_fkb_model_list,    len(cb_ens_fkb_model_list(1))*max_nn_ens, mpichar, 0, mpicom)
       call mpibcast(cb_random_ens_size,    1,        mpiint,  0, mpicom)
       call mpibcast(cb_nn_var_combo, len(cb_nn_var_combo), mpichar,  0, mpicom)
-      ! [TODO] check ierr for each mpibcast call
+      ! [SY TO-DO] check ierr for each mpibcast call
       ! if (ierr /= 0) then
       !    call endrun(subname // ':: ERROR broadcasting namelist variable cb_partial_coupling_vars')
       ! end if
