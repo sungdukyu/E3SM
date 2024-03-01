@@ -15,7 +15,7 @@ For general E3SM uses, refer to the following resources
 > cd E3SM
 > git checkout climsim/fkb
 > git submodule update --init --recursive
-> E3SMROOT=`pwd`
+> E3SMROOT=`pwd` # Root of the E3SM codes
 ```
 
 ### [1] Create a case
@@ -172,8 +172,7 @@ cb_random_ens_size = ...     #(integer) number of ensemble members to make a mea
 (add single-model or ensemble model option)
 &climsim_nl
 cb_partial_coupling = ...  #(logical) .true. if input state_q0001 is relative humidity; .false. if specific humidity
-cb_partial_coupling_vars = #(strings) a list of NN variables to be 
-'ptend_t', 'ptend_q0001' # 'ptend_t', 'ptend_q0001','ptend_q0002','ptend_q0003', 'ptend_u', 'ptend_v', 'cam_out_PRECC', 'cam_out_PRECSC', 'cam_out_NETSW', 'cam_out_FLWDS', 'cam_out_SOLS', 'cam_out_SOLL', 'cam_out_SOLSD', 'cam_out_SOLLD'
+cb_partial_coupling_vars = #(strings) a list of NN variables to be prognostically coupled
 /
 ```
 
@@ -187,12 +186,12 @@ input_rh = ...  #(logical) .true. if input state_q0001 is relative humidity; .fa
 ```
 
 ## Appendix B: Install FKB
-Unfortunately, [the official FKB repository](https://github.com/scientific-computing/FKB) is no longer maintained. So, [a different version of FKB](https://github.com/sungdukyu/FKB64), which fixed several bugs and added more layer, is used here.
+Unfortunately, [the official FKB repository](https://github.com/scientific-computing/FKB) is no longer maintained. So, [a different version of FKB](https://github.com/sungdukyu/FKB64), which fixed several bugs and added more activation functions, is used here.
 
 - Install FKB:
 
 ```
-> # (move to the direcotry where you want to install FKB)
+> # (move to the directory where you want to install FKB)
 > DIR=`pwd`
 > git clone https://github.com/sungdukyu/FKB64
 > cd FKB64 
@@ -216,8 +215,8 @@ EOF
 To maximize the diagnostic capability, the partial coupling can save ClimSim output variables (state_t, state_q0001, state_q0002, state_q0003, state_u, state_v, cam_out_NETSW, cam_out_FLWDS, cam_out_SOLL, cam_out_SOLS, cam_out_SOLLD, cam_out_SOLSD, cam_out_PRECC, cam_out_PRECSC) at each time step of the partial coupling. The suffix of a variable name is indicative of the time point when the variable is saved.
 - "_0" (e.g., state_t_0): Input stave
 - "_1" (e.g., state_t_1): Output of SP (CRM) calculation
-- "_2" (e.g., state_t_1): Output of NN calculation
-- "_3" (e.g., state_t_1): Partial coupled output, i.e., the combination of the above two based on the namelist variable cb_partial_coupling_vars
+- "_2" (e.g., state_t_2): Output of NN calculation
+- "_3" (e.g., state_t_3): Partial coupled output, i.e., the combination of the above two based on the namelist variable cb_partial_coupling_vars
 
 
 # To-be-added
