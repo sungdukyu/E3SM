@@ -15,7 +15,7 @@ For general E3SM uses, refer to the following resources
 > cd E3SM
 > git checkout climsim/fkb
 > git submodule update --init --recursive
-> E3SMROOT=`pwd` # Root of the E3SM codes
+> E3SMROOT=`pwd`                                # Root of the E3SM codes
 ```
 
 ### [1] Create a case
