@@ -1,5 +1,7 @@
 # ClimSim-enabled E3SM
-This document provides how to run E3SM with a ClimSim emulator. While the configurations in this example are based on NERSC Perlmutter, other machines can be used. If porting is necessary, please refer to [the CIME document](https://e3sm.org/model/running-e3sm/supported-machines/)
+This document provides a step-by-step instruction on how to run E3SM with a ClimSim emulator. If you want a single, streamlined script covering from creating and compiling a case to submitting a job, refer to [this script](https://github.com/sungdukyu/E3SM/blob/climsim/tmp_doc/climsim_scripts/FKB-E3SM.run.py)
+
+While the configurations in this example are based on NERSC Perlmutter, other machines can be used. If porting is necessary, please refer to [the CIME document](https://e3sm.org/model/running-e3sm/supported-machines/)
 
 This version of ClimSim-E3SM relies on [FKB](https://www.hindawi.com/journals/sp/2020/8888811/) to link an ML emulator inside E3SM's Fortran codebase. If FKB is not installed previously on a machine, see Appendix B for installing FKB.
 
