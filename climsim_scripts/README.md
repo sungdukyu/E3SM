@@ -231,4 +231,3 @@ To maximize the diagnostic capability, the partial coupling can save ClimSim out
 - "_1" (e.g., state_t_1): Output of SP (CRM) calculation
 - "_2" (e.g., state_t_2): Output of NN calculation
 - "_3" (e.g., state_t_3): Partial coupled output, i.e., the combination of the above two based on the namelist variable cb_partial_coupling_vars
-- 
